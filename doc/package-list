@@ -1,0 +1,8 @@
+fr.epita.iam.datamodel
+fr.epita.iam.exceptions
+fr.epita.iam.launcher
+fr.epita.iam.services.configuration
+fr.epita.iam.services.connections
+fr.epita.iam.services.identity.dao
+fr.epita.iam.services.test
+fr.epita.iam.services.users.dao

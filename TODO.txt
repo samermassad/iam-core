@@ -1,0 +1,33 @@
+TODO
+
+change default path for configuration file in ConfigurationService.java
+
+make search xml case insensitive (lower-case didnt work) in IdentityXMLDAO.search();
+
+check if database are identical before lanching
+
+check username if exists before creating
+
+delete user when deleting identity
+
+check username and password before creating or updating (empty or difficulty)
+
+fix the problem of create method(search for identity)
+
+put gui in seperate project
+
+rules for unique id/username not contain space
+
+check old password when changing usernames
+
+change main documentation
+
+make unique id mandatory in gui
+
+remove readonly buttons from gui
+
+generate java doc
+
+check solar lint
+
+check code quality
