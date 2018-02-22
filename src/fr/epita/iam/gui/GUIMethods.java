@@ -15,6 +15,7 @@ import fr.epita.iam.exceptions.NoIdentityFoundException;
 import fr.epita.iam.exceptions.ReadOnlyException;
 import fr.epita.iam.exceptions.SearchException;
 import fr.epita.iam.exceptions.UpdateException;
+import fr.epita.iam.launcher.Global;
 import fr.epita.iam.services.identity.dao.IdentityDAOManager;
 import fr.epita.iam.services.users.dao.UserDAOManager;
 import fr.epita.logger.Logger;
@@ -110,6 +111,7 @@ public class GUIMethods {
 		user.setUserName(userName);
 		user.setPassword(password);
 		user.setIdentityID(dao.getId(uid));
+		user.setUid(uid);
 		try {
 			dao.create(user);
 		} catch (CreationException | ReadOnlyException | SearchException | TransformerException e1) {
@@ -136,7 +138,7 @@ public class GUIMethods {
 	}
 
 	protected static void userUpdate(User from, String userName, String newPwd, int iID)
-			throws ReadOnlyException, UpdateException, TransformerException {
+			throws ReadOnlyException, UpdateException, TransformerException, SearchException {
 		UserDAOManager dao = new UserDAOManager();
 		User to = new User();
 		to.setUserName(userName);
@@ -145,7 +147,7 @@ public class GUIMethods {
 		try {
 			LOGGER.info("Updating user: " + from + " to: " + to);
 			dao.update(from, to);
-		} catch (ReadOnlyException | UpdateException | TransformerException e1) {
+		} catch (ReadOnlyException | UpdateException | TransformerException | SearchException e1) {
 			LOGGER.error("Error occured while updating user: " + from + " to: " + to, e1);
 			throw e1;
 		}
@@ -159,7 +161,8 @@ public class GUIMethods {
 			user.setUserName(userName);
 		}
 		if (!uid.isEmpty()) {
-			user.setIdentityID(dao.getId(uid));
+			user.setUid(uid);
+			if(Global.isDBWorking()) user.setIdentityID(dao.getId(uid));
 		}
 		try {
 			results = dao.search(user);

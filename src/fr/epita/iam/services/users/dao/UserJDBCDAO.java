@@ -81,23 +81,23 @@ public class UserJDBCDAO implements UserDAO {
 	 * @param uid
 	 * @return id of the identity
 	 */
-	public int getId(String identityID) {
+	public int getId(String uid) {
 		Connection connection = null;
 		int id = 0;
 		PreparedStatement preparedStatement = null;
 		ResultSet rs = null;
 		try {
 			connection = JDBCConnection.getConnection();
-			preparedStatement = connection.prepareStatement("SELECT ID FROM IDENTITIES WHERE UID=?");
+			preparedStatement = connection.prepareStatement("SELECT ID FROM IDENTITIES WHERE LOWER(UID)=?");
 			preparedStatement.setMaxRows(1);
-			preparedStatement.setString(1, identityID);
+			preparedStatement.setString(1, uid.toLowerCase());
 			rs = preparedStatement.executeQuery();
 			while (rs.next()) {
 				id = Integer.parseInt(rs.getString("ID"));
 			}
 			rs.close();
 		} catch (final Exception e) {
-			LOGGER.error("Error occured while searching database for identity id: " + identityID + "got that error "
+			LOGGER.error("Error occured while searching database for identity id: " + uid + "got that error "
 					+ e.getMessage());
 		} finally {
 			JDBCConnection.close(connection, preparedStatement, rs);
@@ -128,9 +128,8 @@ public class UserJDBCDAO implements UserDAO {
 			// WHERE (I.UID = '{UID}') AND (L.USERNAME LIKE '{name}');
 			final String sqlString = "SELECT L.USERNAME, L.HASHED_PASSWORD, L.IDENTITYID, I.UID " + "FROM IDENTITIES I "
 					+ "INNER JOIN LOGIN_USERS L ON L.IDENTITYID = I.ID " + "WHERE (? IS NULL OR L.USERNAME LIKE ?) "
-					+ "AND (? = 0 OR I.UID = ?)";
+					+ "AND (? = 0 OR L.IDENTITYID = ?)";
 			preparedStatement = connection.prepareStatement(sqlString);
-
 			preparedStatement.setString(1, criteria.getUserName());
 			preparedStatement.setString(2, "%" + criteria.getUserName() + "%");
 			preparedStatement.setInt(3, criteria.getIdentityID());
@@ -273,7 +272,7 @@ public class UserJDBCDAO implements UserDAO {
 		try {
 			connection = JDBCConnection.getConnection();
 			// SELECT ID
-			// FROM IDENTITIES
+			// FROM LOGIN_USERS
 			// WHERE (USERNAME = '{used username}') AND (HASHEDPASSWORD =
 			// '{hash_of_used_password}');
 			final String sqlString = "SELECT ID FROM LOGIN_USERS " + "WHERE (USERNAME = ?) "
@@ -285,6 +284,7 @@ public class UserJDBCDAO implements UserDAO {
 			rs = preparedStatement.executeQuery();
 			while (rs.next()) {
 				success = true;
+				break;
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			LOGGER.error("error while logining in", e);
@@ -311,6 +311,41 @@ public class UserJDBCDAO implements UserDAO {
 	public boolean checkOldPwd(User oldUser) throws SearchException {
 		// not needed
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see fr.epita.iam.services.users.dao.UserDAO#usernameExists(fr.epita.iam.datamodel.User)
+	 */
+	@Override
+	public boolean usernameExists(User user) throws SearchException {
+		Connection connection = null;
+		boolean success = false;
+		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
+		try {
+			connection = JDBCConnection.getConnection();
+			// SELECT ID
+			// FROM LOGIN_USERS
+			// WHERE (USERNAME = '{used username}');
+			final String sqlString = "SELECT IDENTITYID FROM LOGIN_USERS " + "WHERE (USERNAME = ?)";
+			preparedStatement = connection.prepareStatement(sqlString);
+			preparedStatement.setString(1, user.getUserName());
+			rs = preparedStatement.executeQuery();
+			while (rs.next()) {
+				if(Integer.parseInt(rs.getString("IDENTITYID")) != user.getIdentityID()) {
+					// not the current user
+					success = true;
+					break;
+				}
+				
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			LOGGER.error("error while checking if username exists", e);
+			throw new SearchException(e, user);
+		} finally {
+			JDBCConnection.close(connection, preparedStatement, rs);
+		}
+		return success;
 	}
 
 }

@@ -58,7 +58,7 @@ public class UserXMLDAO implements UserDAO {
 	private static final String USER = "user";
 	
 	private static final String USERNAME = "username";
-	private static final String IDENTITYID = "identityID";
+	private static final String IDENTITYID = "uid";
 	private static final String HASHEDPASSWORD = "hashedPassword";
 
 	private static final String USERNAMEEXPRESSION = PROPERTYNAMEEXPRESSION + USERNAME + TEXTEXPRESSION;
@@ -103,7 +103,7 @@ public class UserXMLDAO implements UserDAO {
 
 	private void setProperties(User user, final Element userElement) {
 		userElement.appendChild(getNewPropertyElmt(USERNAME, user.getUserName()));
-		userElement.appendChild(getNewPropertyElmt(IDENTITYID, String.valueOf(user.getIdentityID())));
+		userElement.appendChild(getNewPropertyElmt(IDENTITYID, user.getUid().toLowerCase()));
 		String hashedPassword = null;
 		if(user.getHashedPassword() == null) {
 			hashedPassword = this.oldHashedPassword;
@@ -143,9 +143,8 @@ public class UserXMLDAO implements UserDAO {
 	 */
 	@Override
 	public void update(User from, User to) throws TransformerException {
-
 		if (from.getIdentityID() == to.getIdentityID()) {
-			String expression = USEREXPRESSION + IDENTITYIDEXPRESSION + " = " + to.getIdentityID() + "]";
+			String expression = USEREXPRESSION + IDENTITYIDEXPRESSION + " = '" + from.getUid().toLowerCase() + "']";
 			try {
 				final XPathFactory xpathFactory = XPathFactory.newInstance();
 				final XPath xpath = xpathFactory.newXPath();
@@ -158,11 +157,12 @@ public class UserXMLDAO implements UserDAO {
 				if (result instanceof Element) {
 					Element el = (Element) result;
 					this.oldHashedPassword = from.getHashedPassword();
+					to.setUid(from.getUid());
 					setProperties(to, el);
 					XMLConnection.saveUserXML(document);
 				}
 
-			} catch (final XPathExpressionException e) {
+			} catch (XPathExpressionException | NullPointerException e) {
 				LOGGER.error("An error occured", e);
 			}
 		}
@@ -225,18 +225,10 @@ public class UserXMLDAO implements UserDAO {
 		expression += " and ";
 
 		expression += IDENTITYIDEXPRESSION + " = ";
-		if (criteria.getIdentityID() != 0) {
-			expression += "'" + criteria.getIdentityID() + "'";
+		if (criteria.getUid() != null) {
+			expression += "'" + criteria.getUid() + "'";
 		} else {
 			expression += "*";
-		}
-
-		expression += " and ";
-
-		if (criteria.getHashedPassword() != null) {
-			expression += "contains(" + HASHEDPASSWORDEXPRESSION + ", '" + criteria.getHashedPassword() + "')";
-		} else {
-			expression += HASHEDPASSWORDEXPRESSION + " = *";
 		}
 
 		expression += "]";
@@ -255,8 +247,8 @@ public class UserXMLDAO implements UserDAO {
 						XPathConstants.STRING));
 				user.setPassword((String) xpathFactory.newXPath().compile(HASHEDPASSWORDEXPRESSION).evaluate(item,
 						XPathConstants.STRING));
-				user.setIdentityID(
-						Integer.parseInt((String) xpathFactory.newXPath().compile(IDENTITYIDEXPRESSION).evaluate(item, XPathConstants.STRING)));
+				user.setUid(
+						(String) xpathFactory.newXPath().compile(IDENTITYIDEXPRESSION).evaluate(item, XPathConstants.STRING));
 				users.add(user);
 			}
 
@@ -314,6 +306,15 @@ public class UserXMLDAO implements UserDAO {
 	 */
 	@Override
 	public boolean checkOldPwd(User oldUser) throws SearchException {
+		// not needed
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see fr.epita.iam.services.users.dao.UserDAO#usernameExists(fr.epita.iam.datamodel.User)
+	 */
+	@Override
+	public boolean usernameExists(User user) throws SearchException {
 		// not needed
 		return false;
 	}

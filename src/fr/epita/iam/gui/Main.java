@@ -41,7 +41,7 @@ public class Main {
 				JOptionPane.showMessageDialog(null, infoMessage, "Running in read-only mode", JOptionPane.INFORMATION_MESSAGE);
 				
 			}
-			Login.main();
+			Home.main();
 		} else {
 			return;
 		}

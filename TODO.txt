@@ -2,11 +2,7 @@ TODO
 
 change default path for configuration file in ConfigurationService.java
 
-make search xml case insensitive (lower-case didnt work) in IdentityXMLDAO.search();
-
 check if database are identical before lanching
-
-check username if exists before creating
 
 delete user when deleting identity
 

@@ -71,8 +71,9 @@ public interface UserDAO {
 	 * @throws ReadOnlyException
 	 * @throws UpdateException
 	 * @throws TransformerException
+	 * @throws SearchException 
 	 */
-	public void update(User from, User to) throws ReadOnlyException, UpdateException, TransformerException;
+	public void update(User from, User to) throws ReadOnlyException, UpdateException, TransformerException, SearchException;
 
 	/**
 	 * Delete a user
@@ -113,5 +114,12 @@ public interface UserDAO {
 	 * @throws SearchException 
 	 */
 	public boolean checkOldPwd(User oldUser) throws SearchException;
+
+	/**
+	 * @param user
+	 * @return
+	 * @throws SearchException 
+	 */
+	public boolean usernameExists(User user) throws SearchException;
 
 }

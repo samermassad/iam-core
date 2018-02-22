@@ -189,7 +189,7 @@ public class IdentityXMLDAO implements IdentityDAO {
 		String expression = IDENTITYEXPRESSION;
 
 		if (criteria.getDisplayName() != null) {
-			expression += "contains(./property[@name='displayName']/text(), '" + criteria.getDisplayName() + "')";
+			expression += "contains(./property[@name='displayName']/text(), '" + criteria.getDisplayName().toLowerCase() + "')";
 		} else {
 			expression += DISPLAYNAMEEXPRESSION + " = *";
 		}
@@ -198,7 +198,7 @@ public class IdentityXMLDAO implements IdentityDAO {
 
 		expression += UIDEXPRESSION + " = ";
 		if (criteria.getUid() != null) {
-			expression += "'" + criteria.getUid() + "'";
+			expression += "'" + criteria.getUid().toLowerCase() + "'";
 		} else {
 			expression += "*";
 		}

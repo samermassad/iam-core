@@ -75,8 +75,11 @@ public class Home {
 				IdentityAdd.main();
 			}
 		});
-
-		JButton btnIdentitySearch = new JButton("<html>Search / \r\nEdit / \r\nDelete<br />Identities</html>");
+		
+		String buttonContent;
+		if(Global.isReadOnly()) buttonContent = "Search Identities";
+		else  buttonContent = "<html>Search / \r\nEdit / \r\nDelete<br />Identities</html>";
+		JButton btnIdentitySearch = new JButton(buttonContent);
 		btnIdentitySearch.setHorizontalAlignment(SwingConstants.CENTER);
 		btnIdentitySearch.addActionListener(new ActionListener() {
 
@@ -92,7 +95,10 @@ public class Home {
 			}
 		});
 
-		JButton btnUserSearch = new JButton("<html>Search / \r\n" + "Edit / \r\n" + "Delete<br />Users</html>");
+		String buttonContent2;
+		if(Global.isReadOnly()) buttonContent2 = "Search Users";
+		else  buttonContent2 = "<html>Search / \r\nEdit / \r\nDelete<br />Users</html>";
+		JButton btnUserSearch = new JButton(buttonContent2);
 		btnUserSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				UserSearch.main();

@@ -103,7 +103,7 @@ public class UserEdit {
 		JButton btnSaveChanges = new JButton("Save Changes");
 		btnSaveChanges.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean success = false;
+				boolean success = true;
 				String oldPwd = null;
 				String newPwd = null;
 				String repeatPwd = null;
@@ -132,10 +132,12 @@ public class UserEdit {
 							e1.printStackTrace();
 						} 
 					} else {
+						success = false;
 						String errorMessage = "New and repeat password are not identical.";
 						JOptionPane.showMessageDialog(null, errorMessage, "Update failed", JOptionPane.ERROR_MESSAGE);
 					}
 				} else if (num != 0) {
+					success = false;
 					String errorMessage = "Check your input!";
 					JOptionPane.showMessageDialog(null, errorMessage, "Update failed", JOptionPane.ERROR_MESSAGE);
 				}
@@ -143,8 +145,11 @@ public class UserEdit {
 					try {
 						GUIMethods.userUpdate(from, userName.getText(), newPwd, iID);
 						frmIamEdit.dispose();
-					} catch (ReadOnlyException | UpdateException | TransformerException e1) {
+					} catch (ReadOnlyException | TransformerException | SearchException e1) {
 						String errorMessage = "Error occured!";
+						JOptionPane.showMessageDialog(null, errorMessage, "Update failed", JOptionPane.ERROR_MESSAGE);
+					} catch (UpdateException e2) {
+						String errorMessage = "Error occured, possible username duplicate!";
 						JOptionPane.showMessageDialog(null, errorMessage, "Update failed", JOptionPane.ERROR_MESSAGE);
 					}
 				}

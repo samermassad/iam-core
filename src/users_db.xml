@@ -2,6 +2,12 @@
    <user>
       <property name="username">root</property>
       <property name="hashedPassword">63a9f0ea7bb98050796b649e85481845</property>
-      <property name="identityID">1</property>
+      <property name="uid">1</property>
    </user>
-<user><property name="username">samermassad</property><property name="identityID">106</property><property name="hashedPassword">0c639d4c39a8bdb0c50a61378077c2bb</property></user></users>
+   <user><property name="username">eri</property><property name="uid">fr100</property><property name="hashedPassword">83aacf32b6b29b4d113cc7918768e6df</property></user>
+   <user>
+      <property name="username">johnnymassad</property>
+      <property name="uid">fr101</property>
+      <property name="hashedPassword">f9112c0317f7dfad9d864fc08c2a9d90</property>
+   </user>
+</users>

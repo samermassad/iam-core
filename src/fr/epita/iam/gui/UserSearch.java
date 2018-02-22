@@ -32,6 +32,7 @@ import fr.epita.iam.datamodel.User;
 import fr.epita.iam.exceptions.DeleteException;
 import fr.epita.iam.exceptions.ReadOnlyException;
 import fr.epita.iam.exceptions.SearchException;
+import fr.epita.iam.launcher.Global;
 import fr.epita.iam.services.users.dao.UserDAOManager;
 import fr.epita.logger.Logger;
 
@@ -116,13 +117,21 @@ public class UserSearch {
 
 				for (int i = 0; i < length; i++) {
 					User current = results.get(i);
-					model.addRow(
-							new Object[] { i + 1,
-									current.getUserName(),
-									current.getUid(),
-									"Edit User",
-									"Delete User"
-							});
+					Object[] objects;
+					if(Global.isReadOnly()) {
+						objects = new Object[] { i + 1,
+								current.getUserName(),
+								current.getUid()
+						};
+					} else {
+						objects = new Object[] { i + 1,
+								current.getUserName(),
+								current.getUid(),
+								"Edit User",
+								"Delete User"
+						};
+					}
+					model.addRow(objects);
 				}
 
 				table.setModel(model);
@@ -182,8 +191,11 @@ public class UserSearch {
 		JLabel lblResults = new JLabel("Results:");
 		panel_1.add(lblResults, BorderLayout.NORTH);
 
-		DefaultTableModel model = new DefaultTableModel(
-				new String[] { "ID", "Username", "Identity UID", "Edit", "Delete" }, 0);
+		String[] columns;
+		if(Global.isReadOnly()) columns = new String[] { "ID", "Username", "Identity UID" };
+		else columns = new String[] { "ID", "Username", "Identity UID", "Edit", "Delete" };
+		
+		DefaultTableModel model = new DefaultTableModel(columns , 0);
 
 		// create table with data
 		table = new JTable();

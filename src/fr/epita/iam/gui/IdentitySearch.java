@@ -31,6 +31,7 @@ import fr.epita.iam.datamodel.Identity;
 import fr.epita.iam.exceptions.DeleteException;
 import fr.epita.iam.exceptions.ReadOnlyException;
 import fr.epita.iam.exceptions.SearchException;
+import fr.epita.iam.launcher.Global;
 import fr.epita.iam.services.identity.dao.IdentityDAOManager;
 import fr.epita.logger.Logger;
 
@@ -121,14 +122,24 @@ public class IdentitySearch {
 
 				for (int i = 0; i < length; i++) {
 					Identity current = results.get(i);
-					model.addRow(
-							new Object[] { i + 1,
-									current.getDisplayName(),
-									current.getEmail(),
-									current.getUid(),
-									"Edit Identity",
-									"Delete Identity"
-							});
+					Object[] objects;
+					if(Global.isReadOnly()) {
+						objects = new Object[] { i + 1,
+								current.getDisplayName(),
+								current.getEmail(),
+								current.getUid()
+						};
+					} else {
+						objects = new Object[] { i + 1,
+								current.getDisplayName(),
+								current.getEmail(),
+								current.getUid(),
+								"Edit Identity",
+								"Delete Identity"
+						};
+					}
+					model.addRow(objects);
+							
 				}
 
 				table.setModel(model);
@@ -197,8 +208,11 @@ public class IdentitySearch {
 		JLabel lblResults = new JLabel("Results:");
 		panel_1.add(lblResults, BorderLayout.NORTH);
 
-		DefaultTableModel model = new DefaultTableModel(
-				new String[] { "ID", "Display Name", "Email", "Unique ID", "Edit", "Delete" }, 0);
+		String[] columns;
+		if(Global.isReadOnly()) columns = new String[] { "ID", "Display Name", "Email", "Unique ID"};
+		else columns = new String[] { "ID", "Display Name", "Email", "Unique ID", "Edit", "Delete" };
+		
+		DefaultTableModel model = new DefaultTableModel(columns , 0);
 
 		// create table with data
 		table = new JTable();

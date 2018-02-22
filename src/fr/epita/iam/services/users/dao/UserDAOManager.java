@@ -67,7 +67,7 @@ public class UserDAOManager implements UserDAO {
 			LOGGER.error("Running in read-only mode. Can't create this user : " + user);
 			throw new ReadOnlyException(user);
 		} else {
-			if (getUserByIdentityId(user) == null) {
+			if (getUserByIdentityId(user) == null && !usernameExists(user)) {
 				if (user.getIdentityID() != 0) {
 					// identity id found
 					dbDAO.create(user);
@@ -78,10 +78,19 @@ public class UserDAOManager implements UserDAO {
 					throw new NoIdentityFoundException(user);
 				}
 			} else {
-				LOGGER.error("Duplicate UID found while creating this user: " + user);
+				LOGGER.error("Duplicate Username or UID found while creating this user: " + user);
 				throw new DuplicateException(user);
 			}
 		}
+	}
+
+	/**
+	 * @param user
+	 * @return
+	 * @throws SearchException 
+	 */
+	public boolean usernameExists(User user) throws SearchException {
+		return dbDAO.usernameExists(user);
 	}
 
 	/**
@@ -112,14 +121,19 @@ public class UserDAOManager implements UserDAO {
 	 * @throws ReadOnlyException
 	 * @throws UpdateException
 	 * @throws TransformerException
+	 * @throws SearchException 
 	 */
-	public void update(User from, User to) throws ReadOnlyException, UpdateException, TransformerException {
+	public void update(User from, User to) throws ReadOnlyException, UpdateException, TransformerException, SearchException {
 		if (READ_ONLY) {
 			LOGGER.error("Running in read-only mode. Can't update this user : " + to);
 			throw new ReadOnlyException(to);
 		} else {
-			dbDAO.update(from, to);
-			xmlDAO.update(from, to);
+			if(to.getUserName() != null && !usernameExists(to)) {
+				dbDAO.update(from, to);
+				xmlDAO.update(from, to);
+			} else {
+				throw new UpdateException(to);
+			}
 		}
 	}
 

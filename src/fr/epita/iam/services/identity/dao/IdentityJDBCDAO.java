@@ -81,7 +81,7 @@ public class IdentityJDBCDAO implements IdentityDAO {
 			connection = JDBCConnection.getConnection();
 			final String sqlString = "SELECT DISPLAY_NAME, EMAIL, UID FROM IDENTITIES "
 					+ "WHERE (? IS NULL OR DISPLAY_NAME LIKE ?) " + "AND (? IS NULL OR EMAIL LIKE ?) "
-					+ "AND (? IS NULL OR UID = ?)";
+					+ "AND (? IS NULL OR LOWER(UID) = ?)";
 			preparedStatement = connection.prepareStatement(sqlString);
 
 			preparedStatement.setString(1, criteria.getDisplayName());
@@ -89,7 +89,8 @@ public class IdentityJDBCDAO implements IdentityDAO {
 			preparedStatement.setString(3, criteria.getEmail());
 			preparedStatement.setString(4, "%" + criteria.getEmail() + "%");
 			preparedStatement.setString(5, criteria.getUid());
-			preparedStatement.setString(6, criteria.getUid());
+			if(criteria.getUid() != null) preparedStatement.setString(6, criteria.getUid().toLowerCase());
+			else preparedStatement.setString(6, null);
 			rs = preparedStatement.executeQuery();
 			while (rs.next()) {
 				final Identity currentIdentity = new Identity();
