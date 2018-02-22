@@ -31,6 +31,8 @@ public class ConfigurationService {
 	private Properties properties;
 	private static ConfigurationService instance;
 
+	private final static String DEFAULTCONFPATH = "./conf.properties";
+	
 	private static final Logger LOGGER = new Logger(ConfigurationService.class);
 
 	private ConfigurationService(String filePathToConfiguration) {
@@ -49,8 +51,12 @@ public class ConfigurationService {
 	 */
 	public static ConfigurationService getInstance() {
 		if (instance == null) {
-			if (System.getProperty("conf") == null)
+			// if not initialized, do it
+			if (System.getProperty("conf") == null) {
+				//global variable not provided
+				//use default settings
 				initDefaultSettings();
+			}
 			instance = new ConfigurationService(System.getProperty("conf"));
 		}
 		return instance;
@@ -75,13 +81,15 @@ public class ConfigurationService {
 	public static boolean initDefaultSettings() {
 		// trying to load configuration file from same directory as the jar
 
-		String defaultPath = "c:/tmp/conf.properties";
-		File confFile = new File(defaultPath);
+		File confFile = new File(DEFAULTCONFPATH);
 		if (confFile.exists()) {
-			System.setProperty("conf", defaultPath);
+			//set the system property
+			System.setProperty("conf", DEFAULTCONFPATH);
 			return true;
-		} else
+		} else {
+			// file doesn't exist
 			return false;
+		}
 	}
 
 }

@@ -44,6 +44,7 @@ public class JDBCConnection {
 		final String password = confService.getConfigurationValue(DB_PWD);
 		final String username = confService.getConfigurationValue(DB_USER);
 
+		//get the driver
 		Class.forName("org.apache.derby.jdbc.ClientDriver");
 
 		return DriverManager.getConnection(url, username, password);
@@ -55,6 +56,7 @@ public class JDBCConnection {
 	 * @param connection
 	 */
 	public static void close(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
+		// close connection
 		if (connection != null) {
 			try {
 				connection.close();
@@ -62,6 +64,7 @@ public class JDBCConnection {
 				LOGGER.error("Error occured while closing the connection with the database", e);
 			}
 		}
+		// close prepared statement
 		if (preparedStatement != null) {
 			try {
 				preparedStatement.close();
@@ -69,6 +72,7 @@ public class JDBCConnection {
 				LOGGER.error("Error occured while closing the prepared statement", e);
 			}
 		}
+		// close result set
 		if (resultSet != null) {
 			try {
 				resultSet.close();

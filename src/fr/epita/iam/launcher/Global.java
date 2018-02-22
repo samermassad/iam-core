@@ -11,9 +11,9 @@ package fr.epita.iam.launcher;
  */
 public class Global {
 
-	private static boolean READ_ONLY = false;
-	private static boolean DB = true;
-	private static boolean XML = true;
+	private static boolean readonly = false;
+	private static boolean db = true;
+	private static boolean xml = true;
 
 	// prevent creating an instance for this class
 	private Global() {
@@ -24,7 +24,7 @@ public class Global {
 	 * @return if the program is running in readonly mode
 	 */
 	public static boolean isReadOnly() {
-		return READ_ONLY;
+		return readonly;
 	}
 
 	/**
@@ -32,7 +32,7 @@ public class Global {
 	 * @param readOnly
 	 */
 	protected static void setReadOnly(boolean readOnly) {
-		READ_ONLY = readOnly;
+		readonly = readOnly;
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class Global {
 	 * @return if database connectivity is working properly
 	 */
 	public static boolean isDBWorking() {
-		return DB;
+		return db;
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class Global {
 	 * @param database
 	 */
 	protected static void setDBWorking(boolean database) {
-		DB = database;
+		db = database;
 	}
 
 	/**
@@ -56,15 +56,15 @@ public class Global {
 	 * @return if XML file is found and parsed successfuly
 	 */
 	public static boolean isXMLWorking() {
-		return XML;
+		return xml;
 	}
 
 	/**
 	 * 
 	 * @param xml
 	 */
-	protected static void setXMLWorking(boolean xml) {
-		XML = xml;
+	protected static void setXMLWorking(boolean xmlWorking) {
+		xml = xmlWorking;
 	}
 
 }

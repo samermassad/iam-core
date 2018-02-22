@@ -29,7 +29,7 @@ import fr.epita.logger.Logger;
  */
 public class PrelaunchTests {
 
-	private static Logger LOGGER = new Logger(PrelaunchTests.class);
+	private static Logger logger = new Logger(PrelaunchTests.class);
 
 	/**
 	 * If path is not provided from the user while launching the program, the method
@@ -38,20 +38,20 @@ public class PrelaunchTests {
 	 * @return if configuration file found.
 	 */
 	public boolean configuration() {
-		LOGGER.info("Checking configuration file.");
+		logger.info("Checking configuration file.");
 		if (System.getProperty("conf") == null) {
 			// no link to conf file
 			// trying the default settings
 
-			LOGGER.info("No link to configuration file provided, trying the default settings.");
+			logger.info("No link to configuration file provided, trying the default settings.");
 			boolean defaultConfig = ConfigurationService.initDefaultSettings();
 			if (defaultConfig) {
 				// default configuration worked!
-				LOGGER.info("Default configuration file found.");
+				logger.info("Default configuration file found.");
 				return true;
 			} else {
 				// default configuration failed
-				LOGGER.error("Failed to load default settings. Exiting program...");
+				logger.error("Failed to load default settings. Exiting program...");
 				return false;
 			}
 		} else {
@@ -61,10 +61,10 @@ public class PrelaunchTests {
 			String path = System.getProperty("conf");
 			File confFile = new File(path);
 			if (!confFile.exists()) {
-				LOGGER.error("Provided configuration file doesn't exist. Exiting program...");
+				logger.error("Provided configuration file doesn't exist. Exiting program...");
 				return false;
 			}
-			LOGGER.info("Configuration file found.");
+			logger.info("Configuration file found.");
 			return true;
 		}
 	}
@@ -75,15 +75,16 @@ public class PrelaunchTests {
 	 * @throws SQLException
 	 */
 	public boolean jdbc() throws SQLException {
-		LOGGER.info("Checking database connection.");
+		logger.info("Checking database connection.");
 		boolean jdbc = false;
 		Connection connection = null;
 		try {
 			connection = JDBCConnection.getConnection();
-			LOGGER.info("Database connection working.");
+			logger.info("Database connection working.");
 		} catch (ClassNotFoundException | SQLException e) {
-			LOGGER.error("Can't connect to the database", e);
+			logger.error("Can't connect to the database", e);
 		} finally {
+			//close connection
 			if (connection != null && !connection.isClosed())
 				jdbc = true;
 			JDBCConnection.close(connection, null, null);
@@ -98,16 +99,16 @@ public class PrelaunchTests {
 	public boolean xml() {
 		// checking XML parsing
 
-		LOGGER.info("Checking XML file.");
+		logger.info("Checking XML file.");
 		try {
 			XMLConnection.getIdentityXML();
 		} catch (Exception e1) {
 			// XML file not found or not working
 			// exit program
-			LOGGER.error("Can't use XML.", e1);
+			logger.error("Can't use XML.", e1);
 			return false;
 		}
-		LOGGER.info("XML file working.");
+		logger.info("XML file working.");
 		return true;
 	}
 
@@ -151,8 +152,7 @@ public class PrelaunchTests {
 				}
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error occured while running the prelaunch tests.", e);
 		}
 		return true;
 	}

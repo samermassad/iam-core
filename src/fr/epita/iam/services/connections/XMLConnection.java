@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -77,16 +74,19 @@ public class XMLConnection {
 	 */
 	private static Document getDocument(String path)
 			throws ParserConfigurationException, SAXException, IOException {
+		// get the file
 		final File file = new File(path);
 		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		final DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
-
+		// parse the XML file
 		return documentBuilder.parse(new FileInputStream(file));
 	}
 	
 	public static void saveIdentityXML(Document doc) throws TransformerException {
+		// get file path
 		final ConfigurationService configuration = ConfigurationService.getInstance();
 		String path = configuration.getConfigurationValue("xml.file.path");
+		// save the file
 		save(doc, path);
 	}
 	

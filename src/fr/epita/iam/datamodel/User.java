@@ -145,63 +145,6 @@ public class User {
 	}
 
 	/**
-	 * @return a hash value of the user, useful for comparing users
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (userName == null ? 0 : userName.hashCode());
-		result = prime * result + (identityID == 0 ? 0 : identityID.toString().hashCode());
-		result = prime * result + (hashedPassword == null ? 0 : hashedPassword.hashCode());
-		return result;
-	}
-
-	/**
-	 * Tests wether an object equals the current instance
-	 * 
-	 * @param obj
-	 * @return boolean
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final User other = (User) obj;
-		if (userName == null) {
-			if (other.userName != null) {
-				return false;
-			}
-		} else if (!userName.equals(other.userName)) {
-			return false;
-		}
-		if (identityID == null) {
-			if (other.identityID != null) {
-				return false;
-			}
-		} else if (!identityID.equals(other.identityID)) {
-			return false;
-		}
-		if (hashedPassword == null) {
-			if (other.hashedPassword != null) {
-				return false;
-			}
-		} else if (!hashedPassword.equals(other.hashedPassword)) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
 	 * @return the uid
 	 */
 	public String getUid() {

@@ -31,9 +31,9 @@ import fr.epita.logger.Logger;
  */
 public class IdentityDAOManager implements IdentityDAO {
 
-	private boolean READ_ONLY = true;
+	private boolean readOnly = true;
 
-	private static Logger LOGGER = new Logger(IdentityDAOManager.class);
+	private static Logger logger = new Logger(IdentityDAOManager.class);
 
 	private IdentityDAO dbDAO;
 	private IdentityDAO xmlDAO;
@@ -42,7 +42,7 @@ public class IdentityDAOManager implements IdentityDAO {
 	 * <h3>Constructor</h3>
 	 */
 	public IdentityDAOManager() {
-		READ_ONLY = Global.isReadOnly();
+		readOnly = Global.isReadOnly();
 		dbDAO = new IdentityJDBCDAO();
 		xmlDAO = new IdentityXMLDAO();
 	}
@@ -61,8 +61,8 @@ public class IdentityDAOManager implements IdentityDAO {
 	 */
 	public void create(Identity identity)
 			throws CreationException, ReadOnlyException, DuplicateException, SearchException, TransformerException {
-		if (READ_ONLY) {
-			LOGGER.error("Running in read-only mode. Can't create this identity : " + identity);
+		if (readOnly) {
+			logger.error("Running in read-only mode. Can't create this identity : " + identity);
 			throw new ReadOnlyException(identity);
 		} else {
 			if (getUserByUid(identity) == null) {
@@ -71,7 +71,7 @@ public class IdentityDAOManager implements IdentityDAO {
 				xmlDAO.create(identity);
 			} else {
 				// duplicate uid found
-				LOGGER.error("Duplicate UID found while creating this identity: " + identity);
+				logger.error("Duplicate UID found while creating this identity: " + identity);
 				throw new DuplicateException(identity);
 			}
 		}
@@ -88,8 +88,10 @@ public class IdentityDAOManager implements IdentityDAO {
 	 */
 	public List<Identity> search(Identity criteria) throws SearchException {
 		if (Global.isDBWorking()) {
+			// use database if working
 			return dbDAO.search(criteria);
 		} else {
+			// use XML
 			return xmlDAO.search(criteria);
 		}
 	}
@@ -107,8 +109,8 @@ public class IdentityDAOManager implements IdentityDAO {
 	 * @throws TransformerException
 	 */
 	public void update(Identity from, Identity to) throws ReadOnlyException, UpdateException, TransformerException {
-		if (READ_ONLY) {
-			LOGGER.error("Running in read-only mode. Can't update this identity : " + to);
+		if (readOnly) {
+			logger.error("Running in read-only mode. Can't update this identity : " + to);
 			throw new ReadOnlyException(to);
 		} else {
 			dbDAO.update(from, to);
@@ -126,8 +128,8 @@ public class IdentityDAOManager implements IdentityDAO {
 	 * @throws TransformerException
 	 */
 	public void delete(Identity identity) throws ReadOnlyException, DeleteException, TransformerException {
-		if (READ_ONLY) {
-			LOGGER.error("Running in read-only mode. Can't delete this identity : " + identity);
+		if (readOnly) {
+			logger.error("Running in read-only mode. Can't delete this identity : " + identity);
 			throw new ReadOnlyException(identity);
 		} else {
 			dbDAO.delete(identity);

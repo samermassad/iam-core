@@ -1,9 +1,5 @@
 TODO
 
-change default path for configuration file in ConfigurationService.java
-
-put gui in seperate project
-
 generate java doc
 
 check solar lint
