@@ -2,13 +2,7 @@ TODO
 
 change default path for configuration file in ConfigurationService.java
 
-check if database are identical before lanching
-
-fix the problem of create method(search for identity)
-
 put gui in seperate project
-
-change main documentation
 
 generate java doc
 

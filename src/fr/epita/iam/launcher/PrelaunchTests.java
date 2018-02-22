@@ -104,7 +104,7 @@ public class PrelaunchTests {
 		} catch (Exception e1) {
 			// XML file not found or not working
 			// exit program
-			LOGGER.error("Can't use XML.");
+			LOGGER.error("Can't use XML.", e1);
 			return false;
 		}
 		LOGGER.info("XML file working.");

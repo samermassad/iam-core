@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,7 +35,7 @@ import fr.epita.iam.services.configuration.ConfigurationService;
 public class XMLConnection {
 	
 	//path to local user's XML file
-	private static final String USERSXML = "src/users_db.xml";
+	private static final String USERSXML = "resources/users_db.xml";
 
 	//prevent creating an instance of this class
 	private XMLConnection() {}
@@ -43,6 +46,7 @@ public class XMLConnection {
 	 * @throws SAXException
 	 * @throws IOException
 	 */
+	
 	public static Document getIdentityXML() throws ParserConfigurationException, SAXException, IOException {
 		// open and validate the XML file
 		
