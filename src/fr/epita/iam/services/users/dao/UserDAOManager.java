@@ -32,9 +32,9 @@ import fr.epita.logger.Logger;
  */
 public class UserDAOManager implements UserDAO {
 
-	private boolean READ_ONLY = true;
+	private boolean readOnly = true;
 
-	private static Logger LOGGER = new Logger(UserDAOManager.class);
+	private static Logger logger = new Logger(UserDAOManager.class);
 
 	private UserDAO dbDAO;
 	private UserDAO xmlDAO;
@@ -43,7 +43,7 @@ public class UserDAOManager implements UserDAO {
 	 * <h3>Constructor</h3>
 	 */
 	public UserDAOManager() {
-		READ_ONLY = Global.isReadOnly();
+		readOnly = Global.isReadOnly();
 		dbDAO = new UserJDBCDAO();
 		xmlDAO = new UserXMLDAO();
 	}
@@ -63,8 +63,8 @@ public class UserDAOManager implements UserDAO {
 	 */
 	public void create(User user) throws CreationException, ReadOnlyException, DuplicateException, SearchException,
 			TransformerException, NoIdentityFoundException {
-		if (READ_ONLY) {
-			LOGGER.error("Running in read-only mode. Can't create this user : " + user);
+		if (readOnly) {
+			logger.error("Running in read-only mode. Can't create this user : " + user);
 			throw new ReadOnlyException(user);
 		} else {
 			if (getUserByIdentityId(user) == null && !usernameExists(user)) {
@@ -74,11 +74,11 @@ public class UserDAOManager implements UserDAO {
 					xmlDAO.create(user);
 				} else {
 					// identity id not found
-					LOGGER.error("Cannot create a user who doesn't have an identity: " + user);
+					logger.error("Cannot create a user who doesn't have an identity: " + user);
 					throw new NoIdentityFoundException(user);
 				}
 			} else {
-				LOGGER.error("Duplicate Username or UID found while creating this user: " + user);
+				logger.error("Duplicate Username or UID found while creating this user: " + user);
 				throw new DuplicateException(user);
 			}
 		}
@@ -104,8 +104,10 @@ public class UserDAOManager implements UserDAO {
 	 */
 	public List<User> search(User criteria) throws SearchException {
 		if (Global.isDBWorking()) {
+			// use database if working
 			return dbDAO.search(criteria);
 		} else {
+			// use XML file
 			return xmlDAO.search(criteria);
 		}
 	}
@@ -124,11 +126,12 @@ public class UserDAOManager implements UserDAO {
 	 * @throws SearchException 
 	 */
 	public void update(User from, User to) throws ReadOnlyException, UpdateException, TransformerException, SearchException {
-		if (READ_ONLY) {
-			LOGGER.error("Running in read-only mode. Can't update this user : " + to);
+		if (readOnly) {
+			logger.error("Running in read-only mode. Can't update this user : " + to);
 			throw new ReadOnlyException(to);
 		} else {
 			if(to.getUserName() != null && !usernameExists(to)) {
+				// username is not null and new username doesn't exist
 				dbDAO.update(from, to);
 				xmlDAO.update(from, to);
 			} else {
@@ -147,8 +150,8 @@ public class UserDAOManager implements UserDAO {
 	 * @throws TransformerException
 	 */
 	public void delete(User user) throws ReadOnlyException, DeleteException, TransformerException {
-		if (READ_ONLY) {
-			LOGGER.error("Running in read-only mode. Can't delete this user : " + user);
+		if (readOnly) {
+			logger.error("Running in read-only mode. Can't delete this user : " + user);
 			throw new ReadOnlyException(user);
 		} else {
 			dbDAO.delete(user);
@@ -187,9 +190,12 @@ public class UserDAOManager implements UserDAO {
 	@Override
 	public boolean login(User login) throws SearchException {
 		if (login.getUserName() != null && login.getHashedPassword() != null) {
+			//provided credentials are both not null
 			if (Global.isDBWorking()) {
+				// use database if working
 				return dbDAO.login(login);
 			} else {
+				// use XML file
 				return xmlDAO.login(login);
 			}
 		}
@@ -213,6 +219,7 @@ public class UserDAOManager implements UserDAO {
 		if (oldProvidedHashedPassword == null) {
 			return false;
 		} else {
+			// old password is not null
 			oldUser = getUserByIdentityId(oldUser);
 			return oldUser.getHashedPassword().equals(oldProvidedHashedPassword);
 		}

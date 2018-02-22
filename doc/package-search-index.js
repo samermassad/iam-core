@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"fr.epita.iam.datamodel"},{"l":"fr.epita.iam.exceptions"},{"l":"fr.epita.iam.launcher"},{"l":"fr.epita.iam.services.configuration"},{"l":"fr.epita.iam.services.connections"},{"l":"fr.epita.iam.services.identity.dao"},{"l":"fr.epita.iam.services.test"},{"l":"fr.epita.iam.services.users.dao"}]

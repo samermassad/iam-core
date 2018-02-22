@@ -71,6 +71,7 @@ public class UserXMLDAO implements UserDAO {
 	 */
 	public UserXMLDAO() {
 		try {
+			// get the XML document
 			document = XMLConnection.getUsersXML();
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			LOGGER.error("Failed to load local users' XML.", e);
@@ -93,11 +94,15 @@ public class UserXMLDAO implements UserDAO {
 	 */
 	@Override
 	public void create(User user) throws CreationException, TransformerException {
-		
+		// get root element
 		final Element root = document.getDocumentElement();
+		// create a new identity element
 		final Element userElement = getNewUserElt();
+		// set the properties
 		setProperties(user, userElement);
+		// append the identity element to the root
 		root.appendChild(userElement);
+		// save the document
 		XMLConnection.saveUserXML(document);
 	}
 
@@ -106,15 +111,19 @@ public class UserXMLDAO implements UserDAO {
 		userElement.appendChild(getNewPropertyElmt(IDENTITYID, user.getUid().toLowerCase()));
 		String hashedPassword = null;
 		if(user.getHashedPassword() == null) {
+			// password hasn't been change during user editing
 			hashedPassword = this.oldHashedPassword;
 		} else {
+			// password has been changed
 			hashedPassword = user.getHashedPassword();
 		}
 		userElement.appendChild(getNewPropertyElmt(HASHEDPASSWORD, hashedPassword));
 	}
 
 	private Element getNewPropertyElmt(String propertyName, String propertyValue) {
+		// create a new property element
 		final Element userProperty = getNewPropertyElt();
+		// set node values
 		userProperty.setNodeValue(propertyName);
 		userProperty.setAttribute("name", propertyName);
 		userProperty.setTextContent(propertyValue);
@@ -144,17 +153,23 @@ public class UserXMLDAO implements UserDAO {
 	@Override
 	public void update(User from, User to) throws TransformerException {
 		if (from.getIdentityID() == to.getIdentityID()) {
+			// safe to go
+			// construct the expression
 			String expression = USEREXPRESSION + IDENTITYIDEXPRESSION + " = '" + from.getUid().toLowerCase() + "']";
 			try {
 				final XPathFactory xpathFactory = XPathFactory.newInstance();
 				final XPath xpath = xpathFactory.newXPath();
+				// compile the expression
 				final XPathExpression xPathExpression = xpath.compile(expression);
+				// evaluate
 				final Node result = (Node) xPathExpression.evaluate(document, XPathConstants.NODE);
 
 				while (result.getFirstChild() != null) {
+					// delete the old element
 					result.removeChild(result.getFirstChild());
 				}
 				if (result instanceof Element) {
+					// create a new element
 					Element el = (Element) result;
 					this.oldHashedPassword = from.getHashedPassword();
 					to.setUid(from.getUid());
@@ -180,15 +195,18 @@ public class UserXMLDAO implements UserDAO {
 	 */
 	@Override
 	public void delete(User user) throws TransformerException {
-
+		// construct the expression
 		String expression = USEREXPRESSION + IDENTITYIDEXPRESSION + " = '" + user.getUid() + "']";
 		try {
 			final XPathFactory xpathFactory = XPathFactory.newInstance();
 			final XPath xpath = xpathFactory.newXPath();
+			// compile
 			final XPathExpression xPathExpression = xpath.compile(expression);
+			// evaluate
 			final Node result = (Node) xPathExpression.evaluate(document, XPathConstants.NODE);
 			
 			if(result != null) {
+				// if node found, delete it
 				result.getParentNode().removeChild(result);
 				XMLConnection.saveUserXML(document);
 			} else {
@@ -236,11 +254,14 @@ public class UserXMLDAO implements UserDAO {
 		try {
 			final XPathFactory xpathFactory = XPathFactory.newInstance();
 			final XPath xpath = xpathFactory.newXPath();
+			// compile
 			final XPathExpression xPathExpression = xpath.compile(expression);
+			// evaluate
 			final NodeList results = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
 
 			final int length = results.getLength();
 			for (int i = 0; i < length; i++) {
+				// deserialise the results
 				final Node item = results.item(i);
 				final User user = new User();
 				user.setUserName((String) xpathFactory.newXPath().compile(USERNAMEEXPRESSION).evaluate(item,
@@ -286,13 +307,19 @@ public class UserXMLDAO implements UserDAO {
 		try {
 			final XPathFactory xpathFactory = XPathFactory.newInstance();
 			final XPath xpath = xpathFactory.newXPath();
+			// compile
 			final XPathExpression xPathExpression = xpath.compile(expression);
+			// evaluate
 			final NodeList results = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
 			final int length = results.getLength();
-			if(length > 0) success = true;
+			if(length > 0) {
+				// at least one user has these credentials
+				success = true;
+			}
 		} catch (final XPathExpressionException e) {
 			LOGGER.error("An error occured", e);
 		}
+		// log the login attemp
 		if(success) {
 			LOGGER.info("Successful login from XML using username: " + login.getUserName());
 		} else {

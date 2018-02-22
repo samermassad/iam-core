@@ -66,6 +66,7 @@ public class IdentityXMLDAO implements IdentityDAO {
 	 */
 	public IdentityXMLDAO() {
 		try {
+			// get the XML document
 			document = XMLConnection.getIdentityXML();
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			LOGGER.error("Failed to load default settings. Exiting program...", e);
@@ -82,10 +83,15 @@ public class IdentityXMLDAO implements IdentityDAO {
 	 */	 
 	@Override
 	public void create(Identity identity) throws CreationException, TransformerException {
+		// get root element
 		final Element root = document.getDocumentElement();
+		// create a new identity element
 		final Element identityElement = getNewIdentityElt();
+		// set the properties
 		setProperties(identity, identityElement);
+		// append the identity element to the root
 		root.appendChild(identityElement);
+		// save the document
 		XMLConnection.saveIdentityXML(document);
 	}
 
@@ -96,7 +102,9 @@ public class IdentityXMLDAO implements IdentityDAO {
 	}
 
 	private Element getNewPropertyElmt(String propertyName, String propertyValue) {
+		// create a new property element
 		final Element identityProperty = getNewPropertyElt();
+		// set node values
 		identityProperty.setNodeValue(propertyName);
 		identityProperty.setAttribute("name", propertyName);
 		identityProperty.setTextContent(propertyValue);
@@ -122,24 +130,30 @@ public class IdentityXMLDAO implements IdentityDAO {
 	public void update(Identity from, Identity to) throws TransformerException {
 
 		if (from.getUid().equals(to.getUid())) {
+			// safe to go
+			// construct the expression
 			String expression = IDENTITYEXPRESSION + UIDEXPRESSION + " = '" + to.getUid() + "']";
 			try {
 				final XPathFactory xpathFactory = XPathFactory.newInstance();
 				final XPath xpath = xpathFactory.newXPath();
+				// compile the expression
 				final XPathExpression xPathExpression = xpath.compile(expression);
+				// evaluate
 				final Node result = (Node) xPathExpression.evaluate(document, XPathConstants.NODE);
 
 				while (result.getFirstChild() != null) {
+					// delete the old element
 					result.removeChild(result.getFirstChild());
 				}
 				if (result instanceof Element) {
+					// create a new element
 					Element el = (Element) result;
 					setProperties(to, el);
 					XMLConnection.saveIdentityXML(document);
 				}
 
 			} catch (final XPathExpressionException e) {
-				LOGGER.error("An error occured", e);
+				LOGGER.error("An error occured while updating:" + from, e);
 			}
 		}
 
@@ -153,15 +167,18 @@ public class IdentityXMLDAO implements IdentityDAO {
 	 */
 	@Override
 	public void delete(Identity identity) throws TransformerException {
-
+		// construct the expression
 		String expression = IDENTITYEXPRESSION + UIDEXPRESSION + " = '" + identity.getUid() + "']";
 		try {
 			final XPathFactory xpathFactory = XPathFactory.newInstance();
 			final XPath xpath = xpathFactory.newXPath();
+			// compile
 			final XPathExpression xPathExpression = xpath.compile(expression);
+			// evaluate
 			final Node result = (Node) xPathExpression.evaluate(document, XPathConstants.NODE);
 			
 			if(result != null) {
+				// if node found, delete it
 				result.getParentNode().removeChild(result);
 				XMLConnection.saveIdentityXML(document);
 			} else {
@@ -169,7 +186,7 @@ public class IdentityXMLDAO implements IdentityDAO {
 			}
 			
 		} catch (final XPathExpressionException e) {
-			LOGGER.error("An error occured", e);
+			LOGGER.error("An error occured while deleting: " + identity, e);
 		}
 
 	}
@@ -216,11 +233,14 @@ public class IdentityXMLDAO implements IdentityDAO {
 		try {
 			final XPathFactory xpathFactory = XPathFactory.newInstance();
 			final XPath xpath = xpathFactory.newXPath();
+			// compile
 			final XPathExpression xPathExpression = xpath.compile(expression);
+			// evaluate
 			final NodeList results = (NodeList) xPathExpression.evaluate(document, XPathConstants.NODESET);
 
 			final int length = results.getLength();
 			for (int i = 0; i < length; i++) {
+				// deserialise the results
 				final Node item = results.item(i);
 				final Identity identity = new Identity();
 				identity.setDisplayName((String) xpathFactory.newXPath().compile(DISPLAYNAMEEXPRESSION).evaluate(item,
@@ -234,7 +254,7 @@ public class IdentityXMLDAO implements IdentityDAO {
 
 		} catch (final XPathExpressionException e) {
 
-			LOGGER.error("An error occured", e);
+			LOGGER.error("An error occured while searching for: " + criteria, e);
 		}
 
 		return identities;

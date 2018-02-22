@@ -1,7 +1,0 @@
-TODO
-
-generate java doc
-
-check solar lint
-
-check code quality
