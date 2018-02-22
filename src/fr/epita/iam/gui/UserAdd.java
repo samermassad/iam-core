@@ -37,6 +37,7 @@ public class UserAdd {
 	private JTextField userName;
 	private JPasswordField password;
 	private JTextField identityID;
+	private JPasswordField repeat;
 
 	/**
 	 * Launch the application.
@@ -100,78 +101,98 @@ public class UserAdd {
 		btnAdd.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				try {
-					GUIMethods.userAdd(userName.getText(), String.valueOf(password.getPassword()),
-							identityID.getText());
-					frmIamAdd.dispose();
-				} catch (CreationException | ReadOnlyException | SearchException | TransformerException e1) {
-					String errorMessage = "Error occured, please try again.";
+				if (!identityID.getText().isEmpty()) {
+					String username = userName.getText();
+					String pwd = String.valueOf(password.getPassword());
+					String pwd2 = String.valueOf(repeat.getPassword());
+					if (!username.isEmpty() && username.indexOf(" ") == -1 && !pwd.isEmpty() && !pwd2.isEmpty()
+							&& pwd.equals(pwd2)) {
+						try {
+							GUIMethods.userAdd(username, pwd, identityID.getText());
+							frmIamAdd.dispose();
+						} catch (CreationException | ReadOnlyException | SearchException | TransformerException e1) {
+							String errorMessage = "Error occured, please try again.";
+							JOptionPane.showMessageDialog(null, errorMessage, "Creation failed",
+									JOptionPane.ERROR_MESSAGE);
+						} catch (DuplicateException e2) {
+							String errorMessage = "Unique ID already exists, please choose another one.";
+							JOptionPane.showMessageDialog(null, errorMessage, "Creation failed",
+									JOptionPane.ERROR_MESSAGE);
+						} catch (NoIdentityFoundException e3) {
+							String errorMessage = "Identity ID not found, please create a corresponding identity and try again";
+							JOptionPane.showMessageDialog(null, errorMessage, "Creation failed",
+									JOptionPane.ERROR_MESSAGE);
+							IdentityAdd.main();
+						}
+					} else {
+						String errorMessage = "Check your inputs. (usernames cannot contain spaces)";
+						JOptionPane.showMessageDialog(null, errorMessage, "Creation failed", JOptionPane.ERROR_MESSAGE);
+					}
+				} else {
+					String errorMessage = "Identity UID cannot be empty.";
 					JOptionPane.showMessageDialog(null, errorMessage, "Creation failed", JOptionPane.ERROR_MESSAGE);
-				} catch (DuplicateException e2) {
-					String errorMessage = "Unique ID already exists, please choose another one.";
-					JOptionPane.showMessageDialog(null, errorMessage, "Creation failed", JOptionPane.ERROR_MESSAGE);
-				} catch (NoIdentityFoundException e3) {
-					String errorMessage = "Identity ID not found, please create a corresponding identity and try again";
-					JOptionPane.showMessageDialog(null, errorMessage, "Creation failed", JOptionPane.ERROR_MESSAGE);
-					IdentityAdd.main();
 				}
+
 			}
 
-			
 		});
+
+		JLabel lblRepeatPassword = new JLabel("Repeat Password:");
+
+		repeat = new JPasswordField();
+		repeat.setColumns(10);
 		GroupLayout groupLayout = new GroupLayout(frmIamAdd.getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(69)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
+				.createSequentialGroup()
+				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup().addGap(69).addGroup(groupLayout
+								.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup().addComponent(lblUniqueId).addGap(63))
 								.addGroup(groupLayout.createSequentialGroup()
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
-										.addComponent(lblDisplayName, GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
-										.addComponent(lblUniqueId, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(identityID, GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
-										.addComponent(userName, GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)))
+										.addComponent(lblEmail, GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+										.addGap(24))
+								.addGroup(
+										groupLayout.createSequentialGroup()
+												.addComponent(lblDisplayName, GroupLayout.DEFAULT_SIZE, 102,
+														Short.MAX_VALUE)
+												.addGap(24))
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(lblEmail, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(password, GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE))))
+										.addComponent(lblRepeatPassword, GroupLayout.PREFERRED_SIZE, 122,
+												GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED))))
+						.addGroup(groupLayout.createSequentialGroup().addGap(20)
+								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(btnCancel)
+										.addComponent(lblAddIdentity))
+								.addGap(110)))
+				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(20)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnCancel)
-								.addComponent(lblAddIdentity))))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(btnAdd, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE)
-					.addGap(22))
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(19)
-					.addComponent(lblAddIdentity)
-					.addGap(52)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblDisplayName)
-						.addComponent(userName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblEmail)
-						.addComponent(password, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblUniqueId)
-						.addComponent(identityID, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnCancel)
-						.addComponent(btnAdd))
-					.addGap(22))
-		);
+								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+										.addComponent(userName, Alignment.TRAILING)
+										.addComponent(password, Alignment.TRAILING).addComponent(repeat)
+										.addComponent(identityID, GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
+								.addGap(82))
+						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+								.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(btnAdd, GroupLayout.PREFERRED_SIZE, 73, GroupLayout.PREFERRED_SIZE)
+								.addGap(29)))));
+		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
+				.createSequentialGroup().addGap(19).addComponent(lblAddIdentity).addGap(21)
+				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblDisplayName).addComponent(
+						userName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addPreferredGap(ComponentPlacement.UNRELATED)
+				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblEmail).addComponent(
+						password, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup().addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(repeat, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup().addGap(14).addComponent(lblRepeatPassword)))
+				.addPreferredGap(ComponentPlacement.UNRELATED)
+				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(lblUniqueId).addComponent(
+						identityID, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addPreferredGap(ComponentPlacement.RELATED, 49, Short.MAX_VALUE).addGroup(groupLayout
+						.createParallelGroup(Alignment.BASELINE).addComponent(btnCancel).addComponent(btnAdd))
+				.addGap(22)));
 		frmIamAdd.getContentPane().setLayout(groupLayout);
 	}
-
 }

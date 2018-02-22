@@ -4,23 +4,13 @@ change default path for configuration file in ConfigurationService.java
 
 check if database are identical before lanching
 
-delete user when deleting identity
-
-check username and password before creating or updating (empty or difficulty)
-
 fix the problem of create method(search for identity)
 
 put gui in seperate project
 
 rules for unique id/username not contain space
 
-check old password when changing usernames
-
 change main documentation
-
-make unique id mandatory in gui
-
-remove readonly buttons from gui
 
 generate java doc
 

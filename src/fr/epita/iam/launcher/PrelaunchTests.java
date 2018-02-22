@@ -70,7 +70,7 @@ public class PrelaunchTests {
 	}
 
 	/**
-	 * 
+	 * Tests the JDBC connection with the database
 	 * @return if JDBC connection is working correctly
 	 * @throws SQLException
 	 */
@@ -92,7 +92,7 @@ public class PrelaunchTests {
 	}
 
 	/**
-	 * 
+	 * Test the parsing of the XML file
 	 * @return if XML file was parsed successfully.
 	 */
 	public boolean xml() {
@@ -110,13 +110,15 @@ public class PrelaunchTests {
 		LOGGER.info("XML file working.");
 		return true;
 	}
-	
+
 	/**
 	 * Runs the prelaunch tests
+	 * 
+	 * @return boolean - if the program can launch or not
 	 * @throws SQLException
 	 */
 	public boolean run() {
-		
+
 		if (!this.configuration()) {
 			// failed to load configuration
 			// exiting..

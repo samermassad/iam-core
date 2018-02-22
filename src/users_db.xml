@@ -4,10 +4,5 @@
       <property name="hashedPassword">63a9f0ea7bb98050796b649e85481845</property>
       <property name="uid">1</property>
    </user>
-   <user><property name="username">eri</property><property name="uid">fr100</property><property name="hashedPassword">83aacf32b6b29b4d113cc7918768e6df</property></user>
-   <user>
-      <property name="username">johnnymassad</property>
-      <property name="uid">fr101</property>
-      <property name="hashedPassword">f9112c0317f7dfad9d864fc08c2a9d90</property>
-   </user>
+   <user><property name="username">samermassad</property><property name="uid">samer</property><property name="hashedPassword">f5704699db93479a2d7450f98474a251</property></user>
 </users>

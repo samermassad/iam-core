@@ -99,8 +99,13 @@ public class IdentityAdd {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
-					GUIMethods.add(displayName.getText(), email.getText(), uid.getText());
-					frmIamAdd.dispose();
+					if(!uid.getText().isEmpty() && uid.getText().indexOf(" ") == -1) {
+						GUIMethods.add(displayName.getText(), email.getText(), uid.getText());
+						frmIamAdd.dispose();
+					} else {
+						String errorMessage = "Unique ID cannot be empty or contain spaces.";
+						JOptionPane.showMessageDialog(null, errorMessage, "Creation failed", JOptionPane.ERROR_MESSAGE);
+					}
 				} catch (CreationException | ReadOnlyException | SearchException | TransformerException e1) {
 					String errorMessage = "Error occured, please try again.";
 					JOptionPane.showMessageDialog(null, errorMessage, "Creation failed", JOptionPane.ERROR_MESSAGE);

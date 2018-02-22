@@ -45,31 +45,8 @@ public class CoreLauncher {
 
 		final PrelaunchTests prelaunchTests = new PrelaunchTests();
 
-		if (!prelaunchTests.configuration()) {
-			// failed to load configuration
-			// exiting..
-			return;
-		}
-
-		if (!prelaunchTests.jdbc()) {
-			// database connection failed
-			// trying to use read-only mode from XML
-			if (!prelaunchTests.xml()) {
-				// XML parsing failed
-				// exiting..
-				return;
-			} else {
-				// using read-only mode
-				Global.setReadOnly(true);
-			}
-		} else {
-			// database connection working
-			// checking XML
-			if (!prelaunchTests.xml()) {
-				// XML parsing failed
-				// using read-only mode
-				Global.setReadOnly(true);
-			}
+		if(prelaunchTests.run()) {
+			// 
 		}
 
 	}

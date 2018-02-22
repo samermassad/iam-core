@@ -181,7 +181,7 @@ public class UserXMLDAO implements UserDAO {
 	@Override
 	public void delete(User user) throws TransformerException {
 
-		String expression = USEREXPRESSION + IDENTITYIDEXPRESSION + " = " + user.getIdentityID() + "]";
+		String expression = USEREXPRESSION + IDENTITYIDEXPRESSION + " = '" + user.getUid() + "']";
 		try {
 			final XPathFactory xpathFactory = XPathFactory.newInstance();
 			final XPath xpath = xpathFactory.newXPath();

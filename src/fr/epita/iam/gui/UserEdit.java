@@ -86,7 +86,7 @@ public class UserEdit {
 		oldPassword = new JPasswordField();
 		oldPassword.setColumns(10);
 
-		JLabel lblOldPassword = new JLabel("Old Password:");
+		JLabel lblOldPassword = new JLabel("Password:");
 
 		userName = new JTextField();
 		userName.setColumns(10);
@@ -103,42 +103,45 @@ public class UserEdit {
 		JButton btnSaveChanges = new JButton("Save Changes");
 		btnSaveChanges.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				boolean success = true;
 				String oldPwd = null;
 				String newPwd = null;
 				String repeatPwd = null;
-				
+				boolean success = true;
+
+				oldPwd = String.valueOf(oldPassword.getPassword());
 				int iID = Integer.parseInt(identityID.getText());
 
-				int num = numOfFilledPasswords();
+				if (!oldPwd.isEmpty()) {
+					try {
+						success = GUIMethods.checkPassword(iID, oldPwd);
+						if (!success) {
+							String errorMessage = "Password is wrong.";
+							JOptionPane.showMessageDialog(null, errorMessage, "Update failed",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					} catch (SearchException e2) {
+						String errorMessage = "Something wrong happened.";
+						JOptionPane.showMessageDialog(null, errorMessage, "Update failed",
+								JOptionPane.ERROR_MESSAGE);
+					}
+					int num = numOfFilledPasswords();
 
-				if (num == 3) {
-					// all of password fields are filled
-
-					oldPwd = String.valueOf(oldPassword.getPassword());
-					newPwd = String.valueOf(newPassword.getPassword());
-					repeatPwd = String.valueOf(repeatPassword.getPassword());
-
-					if (newPwd.equals(repeatPwd)) {
-						try {
-							success = GUIMethods.checkPassword(iID, oldPwd);
-							if(!success) {
-								String errorMessage = "Old password is wrong.";
-								JOptionPane.showMessageDialog(null, errorMessage, "Update failed", JOptionPane.ERROR_MESSAGE);
-							}
-						} catch (Exception e1) {
-							String errorMessage = "Something wrong happened.";
+					if (num == 2) {
+						newPwd = String.valueOf(newPassword.getPassword());
+						repeatPwd = String.valueOf(repeatPassword.getPassword());
+						if(!newPwd.equals(repeatPwd)) {
+							success = false;
+							String errorMessage = "Passwords are not identical.";
 							JOptionPane.showMessageDialog(null, errorMessage, "Update failed", JOptionPane.ERROR_MESSAGE);
-							e1.printStackTrace();
-						} 
-					} else {
+						}
+					} else if (num != 0) {
 						success = false;
-						String errorMessage = "New and repeat password are not identical.";
+						String errorMessage = "Please fill both password fields.";
 						JOptionPane.showMessageDialog(null, errorMessage, "Update failed", JOptionPane.ERROR_MESSAGE);
 					}
-				} else if (num != 0) {
+				} else {
 					success = false;
-					String errorMessage = "Check your input!";
+					String errorMessage = "Please provide the password to edit user.";
 					JOptionPane.showMessageDialog(null, errorMessage, "Update failed", JOptionPane.ERROR_MESSAGE);
 				}
 				if (success) {
@@ -157,7 +160,7 @@ public class UserEdit {
 			}
 		});
 
-		JLabel lblNewPassword = new JLabel("New Password:");
+		JLabel lblNewPassword = new JLabel("New Password: (Optional)");
 
 		newPassword = new JPasswordField();
 		newPassword.setColumns(10);
@@ -236,8 +239,6 @@ public class UserEdit {
 	 */
 	protected int numOfFilledPasswords() {
 		int num = 0;
-		if (oldPassword.getPassword().length != 0)
-			num++;
 		if (newPassword.getPassword().length != 0)
 			num++;
 		if (repeatPassword.getPassword().length != 0)
