@@ -8,8 +8,6 @@ fix the problem of create method(search for identity)
 
 put gui in seperate project
 
-rules for unique id/username not contain space
-
 change main documentation
 
 generate java doc
